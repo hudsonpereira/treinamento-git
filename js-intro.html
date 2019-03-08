@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+</head>
+<body>
+    <div class="container mt-3">
+        <div class="row">
+            <input id="guessNumber" type="text" class="form-control col-9" placeholder="Guess a number">
+            <button id="sendGuessButton" class="btn btn-primary col-2 offset-1">Send</button>
+        </div>
+
+        <div id="feedbackAlert" class="alert alert-success mt-3 d-none">
+            You guessed right! It's 20
+        </div>
+
+        <div class="row mt-5">
+            <div class="col-6">
+                <p class="lead">Number of tries: <span id="tries">0</span></p>
+            </div>
+            <div class="col-6">
+                <button id="restartButton" class="btn btn-warning">Restart</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sendGuessButton = document.getElementById('sendGuessButton');
+        const feedbackAlert = document.getElementById('feedbackAlert');
+        const guessNumber = document.getElementById('guessNumber');
+        const restartButton = document.getElementById('restartButton');
+        const tries = document.getElementById('tries');
+
+        var generatedNumber = generateRandomNumber();
+        var triesCount = 0;
+
+        window.onload = function () {
+            guessNumber.focus();
+        }
+
+        feedbackAlert.show = function () {
+            this.classList.remove('d-none');
+        }
+
+        feedbackAlert.hide = function () {
+            this.classList.add('d-none');
+        }
+
+        feedbackAlert.setFeedback = function (text) {
+            this.innerHTML = text;
+        }
+
+        feedbackAlert.setStateError = function () {
+            this.classList.remove('alert-success');
+            this.classList.add('alert-danger');
+        }
+
+        feedbackAlert.setStateSuccess = function () {
+            this.classList.remove('alert-danger');
+            this.classList.add('alert-success');
+        }
+
+        function generateRandomNumber() {
+            return Math.ceil(Math.random() * 100 + 1);
+        }
+
+        guessNumber.onkeydown = function (e) {
+            if (e.key == 'Enter') {
+                sendGuessButton.click();
+            }
+        }
+
+        restartButton.onclick = function () {
+            triesCount = 0;
+            tries.textContent = triesCount;
+            generatedNumber = generateRandomNumber();
+            feedbackAlert.hide();
+            guessNumber.focus();
+        }
+
+        sendGuessButton.onclick = function () {
+            tries.textContent = ++triesCount;
+            const guessValue = guessNumber.value;
+
+            guessNumber.value = '';
+            guessNumber.focus();
+
+            if (generatedNumber == guessValue) {
+                feedbackAlert.setFeedback('Congratulations! You\'ve guessed it!');
+                feedbackAlert.setStateSuccess();
+                feedbackAlert.show();
+
+                restartButton.click();
+                return;
+            }
+
+            if (generatedNumber < guessValue) {
+                feedbackAlert.setFeedback('The generated number is lower than ' + guessValue);
+                feedbackAlert.setStateError();
+                feedbackAlert.show();
+                return;
+            }
+
+            if (generatedNumber > guessValue) {
+                feedbackAlert.setFeedback('The generated number is higher than ' + guessValue);
+                feedbackAlert.setStateError();
+                feedbackAlert.show();
+                return;
+            }
+        }
+    </script>
+</body>
+</html>
